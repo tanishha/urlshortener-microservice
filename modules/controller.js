@@ -1,5 +1,4 @@
 const urlmodel = require("./model")
-var validUrl = require('valid-url');
 
 function Posturl(req, res) {
     const original_url = req.body.url
