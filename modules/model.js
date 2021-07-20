@@ -9,8 +9,6 @@ const UrlSchema = new Mongoose.Schema({
         type: Number,
         unique: true
     },
-}, {
-    timestamps: true
 });
 
 

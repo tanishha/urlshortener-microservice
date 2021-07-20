@@ -1,22 +1,15 @@
 const urlmodel = require("./model")
 
-function getUrl(req, res) {
-    res.json({
-        msg: "hey"
-    })
-}
-
 function Posturl(req, res) {
     const original_url = req.body.url
-    var short_url = Math.floor(Math.random() * 100);
     urlmodel.findOne({
         original_url
     }).exec(function (err, url) {
         if (err) {
-            return next(err)
+            return err
         }
         if (!url) {
-            console.log("check data", original_url)
+            var short_url = Math.floor(Math.random() * 100);
             const newPost = new urlmodel({
                 original_url: original_url,
                 short_url: short_url
@@ -24,21 +17,50 @@ function Posturl(req, res) {
             newPost
                 .save()
                 .then(function (data) {
-                    res.status(200).json(data);
-                    console.log("Successfully created");
+                    res.status(200).json({
+                        original_url:data.original_url,
+                        short_url:data.short_url
+                    });
                 })
                 .catch(function (err) {
-                    console.log("error is>>>>>", err);
+                    console.log("error is>>", err);
                 });
         } else {
-            res.json(url)
+            res.json({
+                original_url:url.original_url,
+                short_url:url.short_url
+            })
         }
     })
 }
+
+function getPage(req, res) {
+    const short_url = req.params.id
+    if (isNaN(short_url)) {
+        res.json({
+            error: "Wrong format"
+        })
+    } else {
+        urlmodel.findOne({
+            short_url
+        }).exec(function (err, data) {
+            if (err) {
+                return err
+            }
+            if (data) {
+                res.redirect(data.original_url)
+            } else {
+                res.json({
+                    error: "No short URL found for the given input"
+                })
+            }
+        })
+    }
+}
 module.exports = {
     Posturl,
-    getUrl
+    getPage
 };
 
 
-//*TODO : check db, validate url , redirect
+//*TODO : validate url 
