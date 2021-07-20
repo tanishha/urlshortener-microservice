@@ -1,37 +1,48 @@
 const urlmodel = require("./model")
+const dns = require('dns');
 
 function Posturl(req, res) {
     const original_url = req.body.url
-    urlmodel.findOne({
-        original_url
-    }).exec(function (err, url) {
+    const urlObject = new URL(original_url);
+    dns.lookup(urlObject.hostname, function(err) {
         if (err) {
-            return err
-        }
-        if (!url) {
-            var short_url = Math.floor(Math.random() * 100);
-            const newPost = new urlmodel({
-                original_url: original_url,
-                short_url: short_url
-            })
-            newPost
-                .save()
-                .then(function (data) {
-                    res.status(200).json({
-                        original_url:data.original_url,
-                        short_url:data.short_url
-                    });
-                })
-                .catch(function (err) {
-                    console.log("error is>>", err);
-                });
-        } else {
             res.json({
-                original_url:url.original_url,
-                short_url:url.short_url
+                error: "invalid url"
+            })
+        } else {
+            urlmodel.findOne({
+                original_url
+            }).exec(function (err, url) {
+                if (err) {
+                    return err
+                }
+                if (!url) {
+                    var short_url = Math.floor(Math.random() * 100);
+                    const newPost = new urlmodel({
+                        original_url: original_url,
+                        short_url: short_url
+                    })
+                    newPost
+                        .save()
+                        .then(function (data) {
+                            res.status(200).json({
+                                original_url: data.original_url,
+                                short_url: data.short_url
+                            });
+                        })
+                        .catch(function (err) {
+                            console.log("error is>>", err);
+                        });
+                } else {
+                    res.json({
+                        original_url: url.original_url,
+                        short_url: url.short_url
+                    })
+                }
             })
         }
     })
+
 }
 
 function getPage(req, res) {
