@@ -3,7 +3,12 @@ var validUrl = require('valid-url');
 
 function Posturl(req, res) {
     const original_url = req.body.url
-    if (validUrl.isUri(original_url)) {
+    let urlRegex = new RegExp(/[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi);
+
+if(!original_url.match(urlRegex)){
+  res.json({error: 'Invalid URL'})
+	return
+}
         urlmodel.findOne({
             original_url
         }).exec(function (err, url) {
@@ -35,11 +40,8 @@ function Posturl(req, res) {
             }
         })
 
-    } else {
-        res.status(401).json({
-            error: "Invalid URL"
-        })
-    }
+    
+    
 }
 
 function getPage(req, res) {
