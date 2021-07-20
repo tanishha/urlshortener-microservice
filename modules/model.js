@@ -10,10 +10,4 @@ const UrlSchema = new Mongoose.Schema({
         unique: true
     },
 });
-
-
-// UrlSchema.path('original_url').validate((val) => {
-//     urlRegex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-/]))?/;
-//     return urlRegex.test(val);
-// }, 'Invalid URL.');
 module.exports = Mongoose.model("UrlModel", UrlSchema);
