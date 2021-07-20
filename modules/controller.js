@@ -36,7 +36,7 @@ function Posturl(req, res) {
         })
 
     } else {
-        res.json({
+        res.status(401).json({
             error: "Invalid URL"
         })
     }
