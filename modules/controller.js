@@ -7,27 +7,38 @@ function getUrl(req, res) {
 }
 
 function Posturl(req, res) {
-    console.log(req.body.url)
+    const original_url = req.body.url
     var short_url = Math.floor(Math.random() * 100);
-
-    const newPost = new urlmodel({
-        original_url: req.body.url,
-        short_url: short_url
+    urlmodel.findOne({
+        original_url
+    }).exec(function (err, url) {
+        if (err) {
+            return next(err)
+        }
+        if (!url) {
+            console.log("check data", original_url)
+            const newPost = new urlmodel({
+                original_url: original_url,
+                short_url: short_url
+            })
+            newPost
+                .save()
+                .then(function (data) {
+                    res.status(200).json(data);
+                    console.log("Successfully created");
+                })
+                .catch(function (err) {
+                    console.log("error is>>>>>", err);
+                });
+        } else {
+            res.json(url)
+        }
     })
-
-    newPost
-        .save()
-        .then(function (data) {
-            res.json(data);
-            console.log("Successfully created");
-        })
-        .catch(function (err) {
-            console.log("error is>>>>>", err);
-        });
-        console.log(req.body)
-
 }
 module.exports = {
     Posturl,
     getUrl
 };
+
+
+//*TODO : check db, validate url , redirect

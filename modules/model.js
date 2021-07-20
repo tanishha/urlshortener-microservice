@@ -1,5 +1,5 @@
 //schema definition
-var Mongoose = require('mongoose');require('mongoose-type-url');
+var Mongoose = require('mongoose');
 const UrlSchema = new Mongoose.Schema({
     original_url: {
         type: String,
